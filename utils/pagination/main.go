@@ -1,4 +1,4 @@
-package utils
+package pagination
 
 import (
 	"golang-core/config"
@@ -20,20 +20,21 @@ func GeneratePaginationFromRequest(ctx *gin.Context) domain.Pagination{
 
 	for key, value := range query{
 		queryValue := value[len(value)-1]
+
 		switch key{
 
-		case "limit":
-			limit,_ = strconv.Atoi(queryValue)
-			break
+			case "limit":
+				limit,_ = strconv.Atoi(queryValue)
+				break
 
-		case "page":
-			page,_ = strconv.Atoi(queryValue)
-			break
+			case "page":
+				page,_ = strconv.Atoi(queryValue)
+				break
 
-		case "sort":
-			sort = queryValue
-			break
-		}
+			case "sort":
+				sort = queryValue
+				break
+			}
 	}
 	return domain.Pagination{
 		Limit: limit,
