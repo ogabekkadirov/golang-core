@@ -8,7 +8,6 @@ import (
 type Repositories struct {
 	BaseRepo BaseRepo
 	Users Users
-
 }
 
 func NewRepositories(db *gorm.DB) *Repositories{

@@ -13,7 +13,7 @@ var err error
 type Users interface {
 	GetAll(pagination domain.Pagination)(result domain.ResponseBody, cError domain.Error)
 	GetById(id int64)(result domain.User, cError domain.Error)
-	// Create(user domain.CUUser)(result domain.User, cError domain.Error)
+	Create(input domain.CUUser)(result domain.User, cError domain.Error)
 }
 
 type UsersService struct {
@@ -62,6 +62,20 @@ func (s *UsersService) GetById(id int64)(result domain.User, cError domain.Error
 	}
 	return
 }
-// func (s *UsersService) Create(input domain.CUUser)(result domain.User, cError domain.Error){
-// 	err = s.repo.Create(&input)
-// }
+
+func (s *UsersService) Create(input domain.CUUser)(result domain.User, cError domain.Error){
+
+	result = domain.User{
+		Username: input.Username,
+		Fullname: input.Fullname,
+	}
+	result.SetPassword(string(input.Password))
+
+	err = s.repo.Create(&result)
+
+	if err != nil {
+		cError = cerror.NewError(http.StatusInternalServerError, err)
+	}
+
+	return
+}

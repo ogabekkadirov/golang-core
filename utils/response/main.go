@@ -1,6 +1,7 @@
 package response
 
 import (
+	"golang-core/internal/domain"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -20,17 +21,15 @@ func SuccessResult(ctx *gin.Context, httpStatus int, result interface{})(mapResu
 	return
 }
 
-func ErrorResult(ctx *gin.Context, httpStatus int, message string)(mapResult map[string]interface{}){
+func ErrorResult(ctx *gin.Context, err domain.Error)(mapResult map[string]interface{}){
 
 	mapResult = make(map[string]interface{})
 	mapResult["success"] = false
-	mapResult["message"] = http.StatusText(httpStatus)
-	if message != ""{
-		mapResult["message"] = message
-	}
-	mapResult["status"] = httpStatus
+	mapResult["message"] = http.StatusText(err.Code)
+	mapResult["status"] = err.Code
+	mapResult["error_message"] = err.Err.Error()
 
-	ctx.AbortWithStatusJSON(httpStatus, mapResult)
+	ctx.AbortWithStatusJSON(err.Code, mapResult)
 
 	return
 }

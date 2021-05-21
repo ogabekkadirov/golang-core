@@ -23,6 +23,7 @@ func InitEnv() {
 	}
 	database.Init()
 	port := os.Getenv("POST")
+	handlar := 
 	_=handler.Run(port)
 	fmt.Println("Project run with :",port)
 }

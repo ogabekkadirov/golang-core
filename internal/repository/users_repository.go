@@ -12,7 +12,7 @@ import (
 type Users interface{
 	GetTable()(result *gorm.DB, err error)
 	GetById(id int64)(result domain.User, err error)
-	// Create(user domain.User) error
+	Create(user *domain.User) error
 }
 
 type UsersRepo struct {
