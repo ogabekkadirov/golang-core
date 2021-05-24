@@ -1,6 +1,9 @@
 package service
 
-import "golang-core/internal/repository"
+import (
+	"golang-core/internal/repository"
+)
+
 
 type Sevices struct {
 	Users Users
@@ -9,8 +12,7 @@ type Sevices struct {
 type Deps struct {
 	Repos *repository.Repositories
 }
-
-func NewService(deps Deps) *Sevices {
+func NewServices(deps Deps) *Sevices {
 	return &Sevices{
 		Users: NewUsersService(deps.Repos.Users),
 	}

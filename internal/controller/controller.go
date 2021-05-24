@@ -7,11 +7,11 @@ type Controllers struct {
 }
 
 type Deps struct {
-	services *service.Sevices
+	Services *service.Sevices
 }
 
 func NewControllers(deps Deps) *Controllers {
 	return &Controllers{
-		Users: NewUserController(deps.services.Users),
+		Users: NewUserController(deps.Services.Users),
 	}
 }
