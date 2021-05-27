@@ -19,21 +19,22 @@ type Users interface {
 	Store(ctx *gin.Context)
 }
 
-type UserController struct {
-	service service.Users
+
+type UsersController struct {
+	Service service.Users
 }
 
-func NewUserController(service service.Users) *UserController {
-	return &UserController{
-		service: service,
+func NewUsersController(service service.Users) *UsersController{
+	return &UsersController{
+		Service: service,
 	}
 }
 
-func (c *UserController) Index(ctx *gin.Context){
+func (c *UsersController) Index(ctx *gin.Context){
 
 	pagination := pagination.GeneratePaginationFromRequest(ctx)
 
-	result, err := c.service.GetAll(pagination)
+	result, err := c.Service.GetAll(pagination)
 
 	if err.Err != nil {
 		response.ErrorResult(ctx, err)
@@ -44,7 +45,7 @@ func (c *UserController) Index(ctx *gin.Context){
 	return
 }
 
-func (c *UserController) Get(ctx *gin.Context){
+func (c *UsersController) Get(ctx *gin.Context){
 
 	id, err := utils.GetIdParamFromRequest(ctx)
 
@@ -53,7 +54,7 @@ func (c *UserController) Get(ctx *gin.Context){
 		return
 	}
 
-	result, err := c.service.GetById(id)
+	result, err := c.Service.GetById(id)
 
 	if err.Err != nil{
 		response.ErrorResult(ctx, err)
@@ -65,7 +66,7 @@ func (c *UserController) Get(ctx *gin.Context){
 	return
 }
 
-func (c *UserController) Store(ctx *gin.Context){
+func (c *UsersController) Store(ctx *gin.Context){
 	
 	input := domain.CUUser{}
 
@@ -75,6 +76,15 @@ func (c *UserController) Store(ctx *gin.Context){
 		return
 	}
 
+	result, err := c.Service.Create(input)
+
+	if err.Err != nil{
+		response.ErrorResult(ctx, err)
+		return
+	}
+
+	response.SuccessResult(ctx, http.StatusOK, result)
 	
+	return
 
 }

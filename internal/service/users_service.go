@@ -2,6 +2,7 @@ package service
 
 import (
 	"errors"
+	"fmt"
 	"golang-core/internal/domain"
 	"golang-core/internal/repository"
 	"golang-core/utils/cerror"
@@ -17,21 +18,21 @@ type Users interface {
 }
 
 type UsersService struct {
-	repo repository.Users
-	baseRepo repository.BaseRepo
+	Repo repository.Users
+	BaseRepo repository.BaseRepo
 }
 
 func NewUsersService(repo repository.Users) *UsersService {
 
 	return &UsersService{
-		repo: repo,
+		Repo: repo,
 	}
 
 }
 
 func (s *UsersService) GetAll(pagination domain.Pagination)(result domain.ResponseBody, cError domain.Error){
 
-	data, err := s.repo.GetTable()
+	data, err := s.Repo.GetTable()
 
 	if err != nil {
 		cError = cerror.NewError(http.StatusInternalServerError,err)
@@ -40,25 +41,29 @@ func (s *UsersService) GetAll(pagination domain.Pagination)(result domain.Respon
 
 	data.Count(&total)
 
-	data = s.baseRepo.Paginate(data, pagination)
+	list := []domain.User{}
 
-	result = domain.NewResponseBody(pagination, data, total)
+	s.BaseRepo.Paginate(data, pagination).Scan(&list)
+
+	result = domain.NewResponseBody(pagination, list, total)
 
 	return
 }
 
 func (s *UsersService) GetById(id int64)(result domain.User, cError domain.Error){
 
-	result, err = s.repo.GetById(id)
+	result, err = s.Repo.GetById(id)
 
 	if err != nil {
+		
+		if err.Error() == "record not found" {
+			err = errors.New("Data Not Found")
+			cError = cerror.NewError(http.StatusNotFound, err)
+			return
+		}
+		
 		cError = cerror.NewError(http.StatusInternalServerError, err)
 		return
-	}
-
-	if result.ID == 0 {
-		err = errors.New("Data Not Found")
-		cError = cerror.NewError(http.StatusNotFound, err)
 	}
 	return
 }
@@ -68,10 +73,14 @@ func (s *UsersService) Create(input domain.CUUser)(result domain.User, cError do
 	result = domain.User{
 		Username: input.Username,
 		Fullname: input.Fullname,
+		StatusId: 1,
 	}
+
 	result.SetPassword(string(input.Password))
 
-	err = s.repo.Create(&result)
+	fmt.Println(result)
+	
+	err = s.Repo.Create(&result)
 
 	if err != nil {
 		cError = cerror.NewError(http.StatusInternalServerError, err)

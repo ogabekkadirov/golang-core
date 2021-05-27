@@ -1,19 +1,17 @@
 package http
 
 import (
+	"golang-core-old/responseCodes"
 	"golang-core/internal/controller"
 	"golang-core/internal/delivery/http/middlewares"
 	v1 "golang-core/internal/delivery/http/v1"
-	"golang-core/pkg/auth"
-	"net/http"
+	"golang-core/utils/response"
 
 	"github.com/gin-gonic/gin"
 )
 
 
 type Handler struct {
-	tokenManager auth.TokenManager
-	userController controller.UserController
 	controllers *controller.Controllers
 }
 
@@ -32,8 +30,8 @@ func (h *Handler) Init(host, port string) *gin.Engine {
 		middlewares.CorsMiddleware(),
 	)
 
-	router.GET("/ping", func(c *gin.Context) {
-		c.String(http.StatusOK, "pong")
+	router.GET("/ping", func(ctx *gin.Context) {
+		response.SuccessResult(ctx, responseCodes.StatusOK, "pong")
 	})
 
 	h.InitApi(router)
@@ -44,7 +42,7 @@ func (h *Handler) Init(host, port string) *gin.Engine {
 func (h *Handler) InitApi(router *gin.Engine){
 
 	handlerV1 := v1.NewHandler(h.controllers)
-	
+
 	api := router.Group("/api")
 	{
 		handlerV1.Init(api)

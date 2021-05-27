@@ -29,9 +29,8 @@ func (repo *UsersRepo) GetTable()(result *gorm.DB,  err error){
 	
 	if result.Error != nil{
 		err = result.Error
-		return
 	}
-	
+
 	return 
 }
 

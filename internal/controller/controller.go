@@ -10,8 +10,8 @@ type Deps struct {
 	Services *service.Sevices
 }
 
-func NewControllers(deps Deps) *Controllers {
+func NewControllers(deps Deps) *Controllers{
 	return &Controllers{
-		Users: NewUserController(deps.Services.Users),
+		Users: NewUsersController(deps.Services.Users),
 	}
 }
