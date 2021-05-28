@@ -11,5 +11,7 @@ func (h *Handler) InitUsersRoutes(api *gin.RouterGroup){
 		users.GET("/",UsersController.Index)
 		users.POST("/",UsersController.Store)
 		users.GET("/:id",UsersController.Get)
+		users.PUT("/:id",UsersController.Update)
+		users.DELETE("/:id",UsersController.Delete)
 	}
 }

@@ -14,7 +14,9 @@ var err error
 type Users interface {
 	GetAll(pagination domain.Pagination)(result domain.ResponseBody, cError domain.Error)
 	GetById(id int64)(result domain.User, cError domain.Error)
-	Create(input domain.CUUser)(result domain.User, cError domain.Error)
+	Create(input domain.CUser)(result domain.User, cError domain.Error)
+	Update(id int64, input domain.User)(result domain.User, cError domain.Error)
+	Delete(id int64) domain.Error
 }
 
 type UsersService struct {
@@ -68,7 +70,7 @@ func (s *UsersService) GetById(id int64)(result domain.User, cError domain.Error
 	return
 }
 
-func (s *UsersService) Create(input domain.CUUser)(result domain.User, cError domain.Error){
+func (s *UsersService) Create(input domain.CUser)(result domain.User, cError domain.Error){
 
 	result = domain.User{
 		Username: input.Username,
@@ -86,5 +88,38 @@ func (s *UsersService) Create(input domain.CUUser)(result domain.User, cError do
 		cError = cerror.NewError(http.StatusInternalServerError, err)
 	}
 
+	return
+}
+
+
+func (s *UsersService) Update(id int64, input domain.User)(model domain.User, cError domain.Error){
+
+	model, cError = s.GetById(id)
+
+	if cError.Err != nil {
+		return
+	}
+
+	err = s.Repo.Update(input, &model)
+
+	if err != nil{
+		cError = cerror.NewError(http.StatusInternalServerError, err)
+	}
+	return
+}
+
+func (s *UsersService) Delete(id int64)(cError domain.Error){
+
+	model, cError := s.GetById(id)
+
+	if cError.Err != nil {
+		return
+	}
+
+	err = s.Repo.Delete(model)
+
+	if err != nil{
+		cError = cerror.NewError(http.StatusInternalServerError, err)
+	}
 	return
 }
