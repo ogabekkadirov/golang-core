@@ -14,7 +14,7 @@ func GeneratePaginationFromRequest(ctx *gin.Context) domain.Pagination{
 	
 	limit := config.PAGINATION_LIMIT
 	sort  := config.PAGINATION_SORT 
-	page  :=1
+	page  := 1
 
 	query := ctx.Request.URL.Query()
 
