@@ -1,9 +1,9 @@
 package v1
 
 import (
-	"golang-core-old/responseCodes"
 	"golang-core/internal/controller"
 	"golang-core/utils/response"
+	"net/http"
 
 	"github.com/gin-gonic/gin"
 )
@@ -24,7 +24,7 @@ func (h *Handler) Init(api *gin.RouterGroup){
 	{
 		h.InitUsersRoutes(v1)
 		v1.GET("/test", func(ctx *gin.Context) {
-			response.SuccessResult(ctx, responseCodes.StatusOK, "v1 routes are working :).")
+			response.SuccessResult(ctx, http.StatusOK, "v1 routes are working :).")
 		})
 	}
 }

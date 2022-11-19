@@ -1,11 +1,11 @@
 package http
 
 import (
-	"golang-core-old/responseCodes"
 	"golang-core/internal/controller"
 	"golang-core/internal/delivery/http/middlewares"
 	v1 "golang-core/internal/delivery/http/v1"
 	"golang-core/utils/response"
+	"net/http"
 
 	"github.com/gin-gonic/gin"
 )
@@ -31,7 +31,7 @@ func (h *Handler) Init(host, port string) *gin.Engine {
 	)
 
 	router.GET("/ping", func(ctx *gin.Context) {
-		response.SuccessResult(ctx, responseCodes.StatusOK, "pong")
+		response.SuccessResult(ctx, http.StatusOK, "pong")
 	})
 
 	h.InitApi(router)
