@@ -34,19 +34,15 @@ func NewUsersService(repo repository.Users) *UsersService {
 
 func (s *UsersService) GetAll(pagination domain.Pagination)(result domain.ResponseBody, cError domain.Error){
 
-	data, err := s.Repo.GetTable()
 
+	list,err := s.Repo.GetList(pagination)
+	
 	if err != nil {
-		cError = cerror.NewError(http.StatusInternalServerError,err)
-		return 
+		err = errors.New("Data Not Found")
+		cError = cerror.NewError(http.StatusNotFound, err)
+		return
 	}
-
-	data.Count(&total)
-
-	list := []domain.User{}
-
-	s.BaseRepo.Paginate(data, pagination).Scan(&list)
-
+	
 	result = domain.NewResponseBody(pagination, list, total)
 
 	return

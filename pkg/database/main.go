@@ -6,16 +6,16 @@ import (
 	"os"
 	"time"
 
-	"github.com/jinzhu/gorm"
-	_ "github.com/jinzhu/gorm/dialects/postgres"
+	"github.com/jmoiron/sqlx"
+	_ "github.com/lib/pq"
 )
 
 
-var db *gorm.DB
+var db *sqlx.DB
 var err error
 
 
-func Init() *gorm.DB {
+func Init() *sqlx.DB {
 	dbInfo := fmt.Sprintf("user=%s password=%s host=%s port=%s dbname=%s sslmode=disable binary_parameters=yes", 
 		os.Getenv("PG_USER"),
 		os.Getenv("PG_PASSWORD"),
@@ -24,19 +24,20 @@ func Init() *gorm.DB {
 		os.Getenv("PG_DB"),
 	)
 	
-	db,err = gorm.Open("postgres", dbInfo)
+	db,err = sqlx.Open("postgres", dbInfo)
+	err = db.Ping()
 	if err != nil {
 		log.Println("ERROR: cannot connect to database")
 		panic(err)
 	}
 	
-	db.DB().SetMaxOpenConns(100)
-	db.DB().SetMaxIdleConns(50)
-	db.DB().SetConnMaxLifetime(5* time.Minute)
+	db.SetMaxOpenConns(100)
+	db.SetMaxIdleConns(50)
+	db.SetConnMaxLifetime(5* time.Minute)
 	log.Println("The database is connected")
 	return db
 }
 
-func GetDB() *gorm.DB{
+func GetDB() *sqlx.DB{
 	return db
 }

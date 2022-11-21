@@ -3,34 +3,34 @@ package repository
 import (
 	"golang-core/internal/domain"
 
-	"github.com/jinzhu/gorm"
+	"github.com/jmoiron/sqlx"
 )
 
 
 type BaseRepo struct {
 }
 
-func (repo BaseRepo) Paginate(dbQuery *gorm.DB, pagination domain.Pagination)(result *gorm.DB){
+func (repo BaseRepo) Paginate(dbQuery *sqlx.DB, pagination domain.Pagination)(result *sqlx.DB){
 
-	offset := pagination.Limit*(pagination.Page-1)
+	// offset := pagination.Limit*(pagination.Page-1)
 
-	result = dbQuery.Limit(pagination.Limit).Offset(offset).Order(pagination.Sort)
+	// result = dbQuery.Limit(pagination.Limit).Offset(offset).Order(pagination.Sort)
 
 	return
 }
 
-func (repo BaseRepo) With(dbQuery *gorm.DB, loads []string)(result *gorm.DB){
+func (repo BaseRepo) With(dbQuery *sqlx.DB, loads []string)(result *sqlx.DB){
 
-	result = dbQuery
+	// result = dbQuery
 	
-	for _,s := range loads{
-		result = result.Preload(s)
-	}
+	// for _,s := range loads{
+	// 	result = result.Preload(s)
+	// }
 
 	return
 }
 
-// func (repo BaseRepo) WithCondition(dbQuery *gorm.DB, loads map[string]interface{})(result *gorm.DB){
+// func (repo BaseRepo) WithCondition(dbQuery *sqlx.DB, loads map[string]interface{})(result *sqlx.DB){
 
 // 	result = dbQuery
 	

@@ -1,8 +1,6 @@
 package repository
 
-import (
-	"github.com/jinzhu/gorm"
-)
+import "github.com/jmoiron/sqlx"
 
 
 type Repositories struct {
@@ -10,7 +8,7 @@ type Repositories struct {
 	Users Users
 }
 
-func NewRepositories(db *gorm.DB) *Repositories{
+func NewRepositories(db *sqlx.DB) *Repositories{
 	return &Repositories{
 		BaseRepo: BaseRepo{},
 		Users: NewUsersRepo(db),
