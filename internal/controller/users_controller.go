@@ -1,6 +1,7 @@
 package controller
 
 import (
+	"errors"
 	"golang-core/internal/domain"
 	"golang-core/internal/service"
 	"golang-core/utils"
@@ -107,7 +108,12 @@ func (c *UsersController) Update(ctx *gin.Context){
 		response.ErrorResult(ctx, cError)
 		return
 	}
-
+	if uint(id) != input.ID {
+		err := errors.New("query id is not equal in body")
+		cError := cerror.NewError(http.StatusBadRequest,err)
+		response.ErrorResult(ctx, cError)
+		return
+	}
 	result, err := c.Service.Update(id, input)
 
 	if err.Err != nil{

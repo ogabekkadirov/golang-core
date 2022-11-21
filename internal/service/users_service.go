@@ -1,7 +1,6 @@
 package service
 
 import (
-	"errors"
 	"fmt"
 	"golang-core/internal/domain"
 	"golang-core/internal/repository"
@@ -36,9 +35,8 @@ func (s *UsersService) GetAll(pagination domain.Pagination)(result domain.Respon
 
 
 	list,err := s.Repo.GetList(pagination)
-	
+	fmt.Println(list)
 	if err != nil {
-		err = errors.New("Data Not Found")
 		cError = cerror.NewError(http.StatusNotFound, err)
 		return
 	}
@@ -53,13 +51,11 @@ func (s *UsersService) GetById(id int64)(result domain.User, cError domain.Error
 	result, err = s.Repo.GetById(id)
 
 	if err != nil {
-		
-		if err.Error() == "record not found" {
-			err = errors.New("Data Not Found")
+
+		if err.Error() == "sql: no rows in result set" {
 			cError = cerror.NewError(http.StatusNotFound, err)
 			return
 		}
-		
 		cError = cerror.NewError(http.StatusInternalServerError, err)
 		return
 	}
@@ -71,7 +67,7 @@ func (s *UsersService) Create(input domain.CUser)(result domain.User, cError dom
 	result = domain.User{
 		Username: input.Username,
 		Fullname: input.Fullname,
-		StatusId: 1,
+		Status_id: 1,
 	}
 
 	result.SetPassword(string(input.Password))

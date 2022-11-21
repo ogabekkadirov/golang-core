@@ -1,6 +1,7 @@
 package repository
 
 import (
+	"fmt"
 	"golang-core/internal/domain"
 
 	"github.com/jmoiron/sqlx"
@@ -28,7 +29,8 @@ func NewUsersRepo(db *sqlx.DB) *UsersRepo{
 
 func (repo *UsersRepo) GetList(pagination domain.Pagination)(result []domain.User,  err error){
 	
-
+	offset := pagination.Limit*(pagination.Page-1)
+	fmt.Println(offset)
 	err = repo.db.Select(&result, 
 		`SELECT id,
 						username,
@@ -37,14 +39,19 @@ func (repo *UsersRepo) GetList(pagination domain.Pagination)(result []domain.Use
 						password 
 					FROM users 
 					ORDER BY id ASC 
-					OFFSET $1 LIMIT $2`,pagination.Limit,pagination.Page)
+					LIMIT $1 OFFSET $2`,pagination.Limit,offset)
 
 	return 
 }
 
 func (repo *UsersRepo) GetById(id int64)(result domain.User, err error){
 	
-	err = repo.db.Get(&result,"SELECT * FROM users WHERE id=$1",id)
+	err = repo.db.Get(&result,`SELECT id,
+																username,
+																fullname,
+																status_id,
+																password  
+															FROM users WHERE id=$1`,id)
 	
 	if err  != nil{
 		return
@@ -54,7 +61,7 @@ func (repo *UsersRepo) GetById(id int64)(result domain.User, err error){
 }
 func (repo *UsersRepo) Create(user *domain.User)(err error){
 
-	_,err = repo.db.NamedExec(`INSERT INTO person 
+	_,err = repo.db.NamedExec(`INSERT INTO users 
 																(username, 
 																	fullname, 
 																	status_id, 
@@ -69,24 +76,18 @@ func (repo *UsersRepo) Create(user *domain.User)(err error){
 }
 func (repo *UsersRepo) Update(input domain.User, model *domain.User)(err error){
 	
-
-	_,err = repo.db.NamedExec(`UPDATE users 
-															SET	
-																(username, 
-																	fullname, 
-																	status_id, 
-																	password) 
-														  VALUES 
-																(:username,
-																	:fullname, 
-																	:status_id, 
-																	:password)`,input)
+		fmt.Println(input)
+	_,err = repo.db.NamedExec(`UPDATE users
+															SET username=:username,
+																	fullname=:fullname,
+																	status_id=:status_id
+															WHERE id = :id;`,input)
 	return
 }
 
 func (repo *UsersRepo) Delete(model domain.User)(err error){
 
-	_,err = repo.db.Exec("DELETE FROM Users WHERE user_id=$1", model.ID)
+	_,err = repo.db.Exec("DELETE FROM users WHERE id=$1", model.ID)
 
 	return
 }
