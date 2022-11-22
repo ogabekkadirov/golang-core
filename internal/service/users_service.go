@@ -1,7 +1,6 @@
 package service
 
 import (
-	"fmt"
 	"golang-core/internal/domain"
 	"golang-core/internal/repository"
 	"golang-core/utils/cerror"
@@ -35,7 +34,6 @@ func (s *UsersService) GetAll(pagination domain.Pagination)(result domain.Respon
 
 
 	list,err := s.Repo.GetList(pagination)
-	fmt.Println(list)
 	if err != nil {
 		cError = cerror.NewError(http.StatusNotFound, err)
 		return
@@ -71,8 +69,6 @@ func (s *UsersService) Create(input domain.CUser)(result domain.User, cError dom
 	}
 
 	result.SetPassword(string(input.Password))
-
-	fmt.Println(result)
 	
 	err = s.Repo.Create(&result)
 

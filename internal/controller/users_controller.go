@@ -45,7 +45,6 @@ func (c *UsersController) Index(ctx *gin.Context){
 	}
 
 	response.SuccessResult(ctx, http.StatusOK, result)
-	return
 }
 
 func (c *UsersController) Get(ctx *gin.Context){
@@ -65,8 +64,6 @@ func (c *UsersController) Get(ctx *gin.Context){
 	}
 
 	response.SuccessResult(ctx, http.StatusOK, result)
-	
-	return
 }
 
 func (c *UsersController) Store(ctx *gin.Context){
@@ -79,16 +76,14 @@ func (c *UsersController) Store(ctx *gin.Context){
 		return
 	}
 
-	result, err := c.Service.Create(input)
+	_, err := c.Service.Create(input)
 
 	if err.Err != nil{
 		response.ErrorResult(ctx, err)
 		return
 	}
 
-	response.SuccessResult(ctx, http.StatusOK, result)
-	
-	return
+	response.SuccessResult(ctx, http.StatusOK, "Item created")
 
 }
 
@@ -114,14 +109,14 @@ func (c *UsersController) Update(ctx *gin.Context){
 		response.ErrorResult(ctx, cError)
 		return
 	}
-	result, err := c.Service.Update(id, input)
+	_, err = c.Service.Update(id, input)
 
 	if err.Err != nil{
 		response.ErrorResult(ctx, err)
 		return
 	}
 
-	response.SuccessResult(ctx, http.StatusOK, result)
+	response.SuccessResult(ctx, http.StatusOK, "Item updated")
 }
 
 func (c *UsersController) Delete(ctx *gin.Context){
@@ -140,6 +135,4 @@ func (c *UsersController) Delete(ctx *gin.Context){
 	}
 
 	response.SuccessResult(ctx, http.StatusOK, "Item removed successfully")
-
-	return
 }

@@ -15,7 +15,7 @@ func GeneratePaginationFromRequest(ctx *gin.Context) domain.Pagination{
 	limit := config.PAGINATION_LIMIT
 	sort  := config.PAGINATION_SORT 
 	page  := 1
-
+	offset:= 0
 	query := ctx.Request.URL.Query()
 
 	for key, value := range query{
@@ -29,6 +29,7 @@ func GeneratePaginationFromRequest(ctx *gin.Context) domain.Pagination{
 
 			case "page":
 				page,_ = strconv.Atoi(queryValue)
+				offset = limit*(page-1)
 				break
 
 			case "sort":
@@ -40,5 +41,6 @@ func GeneratePaginationFromRequest(ctx *gin.Context) domain.Pagination{
 		Limit: limit,
 		Page: page,
 		Sort: sort,
+		Offset: offset,
 	}
 }

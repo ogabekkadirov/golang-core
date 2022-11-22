@@ -1,7 +1,6 @@
 package repository
 
 import (
-	"fmt"
 	"golang-core/internal/domain"
 
 	"github.com/jmoiron/sqlx"
@@ -28,9 +27,7 @@ func NewUsersRepo(db *sqlx.DB) *UsersRepo{
 }
 
 func (repo *UsersRepo) GetList(pagination domain.Pagination)(result []domain.User,  err error){
-	
-	offset := pagination.Limit*(pagination.Page-1)
-	fmt.Println(offset)
+
 	err = repo.db.Select(&result, 
 		`SELECT id,
 						username,
@@ -39,7 +36,7 @@ func (repo *UsersRepo) GetList(pagination domain.Pagination)(result []domain.Use
 						password 
 					FROM users 
 					ORDER BY id ASC 
-					LIMIT $1 OFFSET $2`,pagination.Limit,offset)
+					LIMIT $1 OFFSET $2`,pagination.Limit,pagination.Offset)
 
 	return 
 }
@@ -59,9 +56,9 @@ func (repo *UsersRepo) GetById(id int64)(result domain.User, err error){
 
 	return 
 }
-func (repo *UsersRepo) Create(user *domain.User)(err error){
+func (repo *UsersRepo) Create(user *domain.User)(error){
 
-	_,err = repo.db.NamedExec(`INSERT INTO users 
+	_,err := repo.db.NamedExec(`INSERT INTO users 
 																(username, 
 																	fullname, 
 																	status_id, 
@@ -71,18 +68,17 @@ func (repo *UsersRepo) Create(user *domain.User)(err error){
 																	:fullname, 
 																	:status_id, 
 																	:password)`,user)
-
-	return
+																	
+	return err
 }
-func (repo *UsersRepo) Update(input domain.User, model *domain.User)(err error){
+func (repo *UsersRepo) Update(input domain.User, model *domain.User)(error){
 	
-		fmt.Println(input)
-	_,err = repo.db.NamedExec(`UPDATE users
+	_,err := repo.db.NamedExec(`UPDATE users
 															SET username=:username,
 																	fullname=:fullname,
 																	status_id=:status_id
 															WHERE id = :id;`,input)
-	return
+	return err
 }
 
 func (repo *UsersRepo) Delete(model domain.User)(err error){
